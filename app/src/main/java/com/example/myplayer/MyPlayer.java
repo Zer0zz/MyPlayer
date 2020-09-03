@@ -79,6 +79,22 @@ public class MyPlayer {
         }
     }
 
+    public void start() {
+            startNative();
+    }
+
+    public void prepare() {
+        prepareNative(dataSource);
+    }
+
+    public void stop() {
+        stopNative();
+    }
+
+    public void release() {
+        releaseNative();
+    }
+
 
     interface OnPreparedListener {
         void onPrepared();

@@ -1,20 +1,19 @@
 #include <jni.h>
 #include <string>
-#include "ffmpeg/include/libavutil/avutil.h"
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_myplayer_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    hello.append(av_version_info());
-    return env->NewStringUTF(hello.c_str());
+// 这个坑不要在踩了
+extern "C" {
+#include <libavutil/avutil.h>
 }
+
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_myplayer_MyPlayer_prepareNative(JNIEnv *env, jobject thiz, jstring data_source) {
-    // TODO: implement prepareNative()
+Java_com_example_myplayer_MyPlayer_prepareNative(JNIEnv *env, jobject thiz, jstring data_source_) {
+    const char *data_source = env->GetStringUTFChars(data_source_, NULL);
+
+    // 释放操作
+    env->ReleaseStringUTFChars(data_source_, data_source);
 }
 
 extern "C"
@@ -38,7 +37,9 @@ Java_com_example_myplayer_MyPlayer_releaseNative(JNIEnv *env, jobject thiz) {
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_com_example_myplayer_MyPlayer_getFFmpegVersion(JNIEnv *env, jobject thiz) {
-    // TODO: implement getFFmpegVersion()
+    std::string hello = "FFmpeg version : ";
+    hello.append(av_version_info());
+    return env->NewStringUTF(hello.c_str());
 }
 
 extern "C"
